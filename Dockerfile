@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM python:2.7
 
 MAINTAINER jakezp@gmail.com
 
@@ -11,14 +11,15 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ADD run.sh /run.sh
 
 # Update and install packages
-RUN apt-get update && apt-get upgrade -yq && apt-get install supervisor tzdata python-pip git -yq
+RUN apt install supervisor tzdata
+RUN pip install paho-mqtt requests jinja2
+
 
 # Setup and configure mqttwarn
 RUN groupadd -r mqttwarn && useradd -r -g mqttwarn mqttwarn
 RUN mkdir -p /opt/mqttwarn
 RUN git clone https://github.com/jpmens/mqttwarn.git /opt/mqttwarn
 RUN chown -R mqttwarn /opt/mqttwarn
-RUN pip install paho-mqtt requests
 
 # Set permissions
 RUN chmod +x /run.sh
